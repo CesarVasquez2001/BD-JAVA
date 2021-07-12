@@ -1,23 +1,27 @@
 package InterfazBD;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import com.mysql.cj.x.protobuf.MysqlxConnection.Close;
+
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
-import javax.swing.JLabel;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
 
 public class interfazConexion extends JFrame {
 	private JPanel contentPane;
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -31,10 +35,12 @@ public class interfazConexion extends JFrame {
 			}
 		});
 	}
+
+	
 	public interfazConexion() {
 		setResizable(false);
 		setTitle("Conectar");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 406, 195);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -46,13 +52,13 @@ public class interfazConexion extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				Connection con = null;
 				final String url = "jdbc:mysql://localhost:3306/";
-				final String dbName = "caso-cooperativa";
+				final String dbName = "cooperativa";
 				final String username = "root";
 				final String password = "2202001";
 				try {
 					con = (Connection) DriverManager.getConnection(url + dbName, username, password);
 					if (!con.isClosed()) {
-						Interfaz v = new Interfaz();
+						interfazTablasReferenciales v = new interfazTablasReferenciales();
 						v.setVisible(true);
 						dispose();
 					}

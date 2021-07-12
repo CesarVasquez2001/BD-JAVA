@@ -11,9 +11,12 @@ import javax.swing.JOptionPane;
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.SystemColor;
+import java.awt.Toolkit;
+
 import javax.swing.border.BevelBorder;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -25,12 +28,12 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.ListSelectionModel;
 
-public class Interfaz extends JFrame {
+public class InterfazTipoServicio extends JFrame {
 
 	private JPanel contentPane;
-	private JTextField rol_cod;
-	private JTextField rol_nom;
-	private JTextField rol_reg;
+	private JTextField serv_cod;
+	private JTextField serv_nom;
+	private JTextField serv_reg;
 	private JButton btnAdicionar;
 	private JButton btnModificar;
 	private JButton btnEliminar;
@@ -44,7 +47,7 @@ public class Interfaz extends JFrame {
 	private JLabel est;
 	Connection con = null;
 	final String url = "jdbc:mysql://localhost:3306/";
-	final String dbName = "caso-cooperativa";
+	final String dbName = "cooperativa";
 	final String username = "root";
 	final String password = "2202001";
 	private JTable Tabla;
@@ -57,7 +60,7 @@ public class Interfaz extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Interfaz frame = new Interfaz();
+					InterfazTipoServicio frame = new InterfazTipoServicio();
 					frame.setVisible(true);
 
 				} catch (Exception e) {
@@ -70,19 +73,19 @@ public class Interfaz extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Interfaz() {
+	public InterfazTipoServicio() {
 		setResizable(false);
-		setTitle("Tabla");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setTitle("Interfaz servicios");
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 683, 755);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		JLabel lblNewLabel = new JLabel("ROL");
+		JLabel lblNewLabel = new JLabel("Servicios");
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 30));
-		lblNewLabel.setBounds(25, 22, 91, 37);
+		lblNewLabel.setBounds(25, 22, 223, 37);
 		contentPane.add(lblNewLabel);
 
 		JPanel panel = new JPanel();
@@ -116,35 +119,35 @@ public class Interfaz extends JFrame {
 		est.setBounds(29, 126, 166, 25);
 		panel_1.add(est);
 
-		rol_cod = new JTextField();
-		rol_cod.addActionListener(new ActionListener() {
+		serv_cod = new JTextField();
+		serv_cod.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				rol_cod.transferFocus();
+				serv_cod.transferFocus();
 			}
 		});
-		rol_cod.setBounds(202, 29, 134, 25);
-		panel_1.add(rol_cod);
-		rol_cod.setColumns(10);
+		serv_cod.setBounds(202, 29, 134, 25);
+		panel_1.add(serv_cod);
+		serv_cod.setColumns(10);
 
-		rol_nom = new JTextField();
-		rol_nom.addActionListener(new ActionListener() {
+		serv_nom = new JTextField();
+		serv_nom.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				rol_nom.transferFocus();
+				serv_nom.transferFocus();
 			}
 		});
-		rol_nom.setColumns(10);
-		rol_nom.setBounds(202, 78, 372, 25);
-		panel_1.add(rol_nom);
+		serv_nom.setColumns(10);
+		serv_nom.setBounds(202, 78, 372, 25);
+		panel_1.add(serv_nom);
 
-		rol_reg = new JTextField();
-		rol_reg.setColumns(10);
-		rol_reg.setBounds(202, 126, 39, 25);
-		rol_reg.setEditable(false);
-		panel_1.add(rol_reg);
+		serv_reg = new JTextField();
+		serv_reg.setColumns(10);
+		serv_reg.setBounds(202, 126, 39, 25);
+		serv_reg.setEditable(false);
+		panel_1.add(serv_reg);
 
-		JLabel lblNewLabel_1 = new JLabel("Registro de Rol");
+		JLabel lblNewLabel_1 = new JLabel("Registro de Servicios");
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 17));
-		lblNewLabel_1.setBounds(10, 10, 156, 26);
+		lblNewLabel_1.setBounds(10, 10, 210, 26);
 		panel.add(lblNewLabel_1);
 
 		JPanel panel_2 = new JPanel();
@@ -156,9 +159,9 @@ public class Interfaz extends JFrame {
 		panel_2.setBounds(25, 340, 628, 229);
 		contentPane.add(panel_2);
 
-		JLabel lblNewLabel_1_1 = new JLabel("Tabla de Rol");
+		JLabel lblNewLabel_1_1 = new JLabel("Tabla de Servicio");
 		lblNewLabel_1_1.setFont(new Font("Tahoma", Font.BOLD, 17));
-		lblNewLabel_1_1.setBounds(10, 10, 156, 26);
+		lblNewLabel_1_1.setBounds(10, 10, 188, 26);
 		panel_2.add(lblNewLabel_1_1);
 
 		JScrollPane scrollPane = new JScrollPane();
@@ -180,7 +183,7 @@ public class Interfaz extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				limpiar();
 				desbloquear();
-				rol_reg.setEditable(false);
+				serv_reg.setEditable(false);
 				btnModificar.setEnabled(false);
 				btnEliminar.setEnabled(false);
 				btnReactivar.setEnabled(false);
@@ -196,22 +199,21 @@ public class Interfaz extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				int fila = Tabla.getSelectedRow();
 				if (fila == -1) {
-					JOptionPane.showMessageDialog(null, "Usuario no seleccionado");
+					JOptionPane.showMessageDialog(null, "Servicio no seleccionado");
 				} else {
 					int cod = Integer.parseInt((String) Tabla.getValueAt(fila, 0).toString());
 					String nom = (String) Tabla.getValueAt(fila, 1);
 					String reg = (String) Tabla.getValueAt(fila, 2);
-					System.out.println(reg);
 					if (reg.equals("I")) {
-						JOptionPane.showMessageDialog(null, "Usuario Inactivo");
+						JOptionPane.showMessageDialog(null, "Servicio Inactivo");
 					} else {
 						limpiar();
 						desbloquear();
-						rol_cod.setEditable(false);
-						rol_reg.setEditable(false);
-						rol_cod.setText("" + cod);
-						rol_nom.setText(nom);
-						rol_reg.setText(reg);
+						serv_cod.setEditable(false);
+						serv_reg.setEditable(false);
+						serv_cod.setText("" + cod);
+						serv_nom.setText(nom);
+						serv_reg.setText(reg);
 						btnEliminar.setEnabled(false);
 						btnAdicionar.setEnabled(false);
 						btnReactivar.setEnabled(false);
@@ -230,23 +232,22 @@ public class Interfaz extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				int fila = Tabla.getSelectedRow();
 				if (fila == -1) {
-					JOptionPane.showMessageDialog(null, "Usuario no seleccionado");
+					JOptionPane.showMessageDialog(null, "Servicio no seleccionado");
 				} else {
 					int cod = Integer.parseInt((String) Tabla.getValueAt(fila, 0).toString());
 					String nom = (String) Tabla.getValueAt(fila, 1);
 					String reg = (String) Tabla.getValueAt(fila, 2);
-					System.out.println(reg);
 					if (reg.equals("I")) {
-						JOptionPane.showMessageDialog(null, "Usuario Inactivo");
+						JOptionPane.showMessageDialog(null, "Servicio Inactivo");
 					} else {
 						limpiar();
 						desbloquear();
-						rol_cod.setEditable(false);
-						rol_nom.setEditable(false);
-						rol_reg.setEditable(false);
-						rol_cod.setText("" + cod);
-						rol_nom.setText(nom);
-						rol_reg.setText(reg);
+						serv_cod.setEditable(false);
+						serv_nom.setEditable(false);
+						serv_reg.setEditable(false);
+						serv_cod.setText("" + cod);
+						serv_nom.setText(nom);
+						serv_reg.setText(reg);
 						btnModificar.setEnabled(false);
 						btnAdicionar.setEnabled(false);
 						btnReactivar.setEnabled(false);
@@ -281,19 +282,19 @@ public class Interfaz extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				int fila = Tabla.getSelectedRow();
 				if (fila == -1) {
-					JOptionPane.showMessageDialog(null, "Usuario no seleccionado");
+					JOptionPane.showMessageDialog(null, "Servicio no seleccionado");
 				} else {
 					limpiar();
 					desbloquear();
-					rol_cod.setEditable(false);
-					rol_nom.setEditable(false);
-					rol_reg.setEditable(false);
+					serv_cod.setEditable(false);
+					serv_nom.setEditable(false);
+					serv_reg.setEditable(false);
 					int cod = Integer.parseInt((String) Tabla.getValueAt(fila, 0).toString());
 					String nom = (String) Tabla.getValueAt(fila, 1);
 					String reg = (String) Tabla.getValueAt(fila, 2);
-					rol_cod.setText("" + cod);
-					rol_nom.setText(nom);
-					rol_reg.setText(reg);
+					serv_cod.setText("" + cod);
+					serv_nom.setText(nom);
+					serv_reg.setText(reg);
 					btnModificar.setEnabled(false);
 					btnAdicionar.setEnabled(false);
 					btnEliminar.setEnabled(false);
@@ -310,19 +311,19 @@ public class Interfaz extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				int fila = Tabla.getSelectedRow();
 				if (fila == -1) {
-					JOptionPane.showMessageDialog(null, "Usuario no seleccionado");
+					JOptionPane.showMessageDialog(null, "Servicio no seleccionado");
 				} else {
 					limpiar();
 					desbloquear();
-					rol_cod.setEditable(false);
-					rol_nom.setEditable(false);
-					rol_reg.setEditable(false);
+					serv_cod.setEditable(false);
+					serv_nom.setEditable(false);
+					serv_reg.setEditable(false);
 					int cod = Integer.parseInt((String) Tabla.getValueAt(fila, 0).toString());
 					String nom = (String) Tabla.getValueAt(fila, 1);
 					String reg = (String) Tabla.getValueAt(fila, 2);
-					rol_cod.setText("" + cod);
-					rol_nom.setText(nom);
-					rol_reg.setText(reg);
+					serv_cod.setText("" + cod);
+					serv_nom.setText(nom);
+					serv_reg.setText(reg);
 					btnModificar.setEnabled(false);
 					btnAdicionar.setEnabled(false);
 					btnEliminar.setEnabled(false);
@@ -339,14 +340,14 @@ public class Interfaz extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					String c, n, er;
-					c = rol_cod.getText();
-					n = rol_nom.getText();
-					er = rol_reg.getText();
+					c = serv_cod.getText();
+					n = serv_nom.getText();
+					er = serv_reg.getText();
 					con = (Connection) DriverManager.getConnection(url + dbName, username, password);
 					if (btnAdicionar.isEnabled()) {
 						desbloquear();
-						PreparedStatement stmt = con
-								.prepareStatement("INSERT INTO rol (RolRol,RolNom,RolUsu) VALUES (?,?,?) ");
+						PreparedStatement stmt = con.prepareStatement(
+								"INSERT INTO tipo_servicio (TipSerCod,TipSerDes,TipSerEstReg) VALUES (?,?,?) ");
 						stmt.setString(1, c);
 						stmt.setString(2, n);
 						stmt.setString(3, er);
@@ -361,7 +362,8 @@ public class Interfaz extends JFrame {
 					}
 					if (btnModificar.isEnabled()) {
 						desbloquear();
-						PreparedStatement stmt = con.prepareStatement("UPDATE rol SET RolNom = ? WHERE RolRol = ?");
+						PreparedStatement stmt = con
+								.prepareStatement("UPDATE tipo_servicio SET TipSerDes = ? WHERE TipSerCod = ?");
 						stmt.setString(1, n);
 						stmt.setString(2, c);
 						stmt.executeUpdate();
@@ -374,8 +376,8 @@ public class Interfaz extends JFrame {
 						limpiarTabla();
 					}
 					if (btnEliminar.isEnabled()) {
-						PreparedStatement stmt = con
-								.prepareStatement("DELETE FROM rol WHERE RolRol = ? and RolNom=? and RolUsu=?");
+						PreparedStatement stmt = con.prepareStatement(
+								"DELETE FROM tipo_servicio WHERE TipSerCod = ? and TipSerDes=? and TipSerEstReg=?");
 						stmt.setString(1, c);
 						stmt.setString(2, n);
 						stmt.setString(3, er);
@@ -389,8 +391,8 @@ public class Interfaz extends JFrame {
 						limpiarTabla();
 					}
 					if (btnInactivar.isEnabled()) {
-						PreparedStatement stmt = con
-								.prepareStatement("UPDATE rol SET RolUsu = ? WHERE RolRol = ? and RolNom=?");
+						PreparedStatement stmt = con.prepareStatement(
+								"UPDATE tipo_servicio SET TipSerEstReg = ? WHERE TipSerCod = ? and TipSerDes=?");
 						stmt.setString(1, "I");
 						stmt.setString(2, c);
 						stmt.setString(3, n);
@@ -404,8 +406,8 @@ public class Interfaz extends JFrame {
 						limpiarTabla();
 					}
 					if (btnReactivar.isEnabled()) {
-						PreparedStatement stmt = con
-								.prepareStatement("UPDATE rol SET RolUsu = ? WHERE RolRol = ? and RolNom=?");
+						PreparedStatement stmt = con.prepareStatement(
+								"UPDATE tipo_servicio SET TipSerEstReg = ? WHERE TipSerCod = ? and TipSerDes=?");
 						stmt.setString(1, "A");
 						stmt.setString(2, c);
 						stmt.setString(3, n);
@@ -434,7 +436,9 @@ public class Interfaz extends JFrame {
 		btnSalir = new JButton("Salir");
 		btnSalir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
+				close();
+				interfazTablasReferenciales n = new interfazTablasReferenciales();
+				n.setVisible(true);
 			}
 		});
 		btnSalir.setFont(new Font("Tahoma", Font.PLAIN, 18));
@@ -447,23 +451,23 @@ public class Interfaz extends JFrame {
 	}
 
 	void limpiar() {
-		rol_cod.setText("");
-		rol_nom.setText("");
-		rol_reg.setText("A");
+		serv_cod.setText("");
+		serv_nom.setText("");
+		serv_reg.setText("A");
 	}
 
 	void bloquear() {
-		rol_cod.setEditable(false);
-		rol_nom.setEditable(false);
-		rol_reg.setEditable(false);
+		serv_cod.setEditable(false);
+		serv_nom.setEditable(false);
+		serv_reg.setEditable(false);
 		btnActualizar.setEnabled(false);
 		btnCancelar.setEnabled(false);
 	}
 
 	void desbloquear() {
-		rol_cod.setEditable(true);
-		rol_nom.setEditable(true);
-		rol_reg.setEditable(true);
+		serv_cod.setEditable(true);
+		serv_nom.setEditable(true);
+		serv_reg.setEditable(true);
 		btnActualizar.setEnabled(true);
 		btnCancelar.setEnabled(true);
 	}
@@ -472,13 +476,13 @@ public class Interfaz extends JFrame {
 		try {
 			modelo = (DefaultTableModel) Tabla.getModel();
 			con = (Connection) DriverManager.getConnection(url + dbName, username, password);
-			PreparedStatement stmt = con.prepareStatement("SELECT * FROM rol");
+			PreparedStatement stmt = con.prepareStatement("SELECT * FROM tipo_servicio");
 			ResultSet rs = stmt.executeQuery();
 			Object[] datos = new Object[3];
 			while (rs.next()) {
-				datos[0] = rs.getInt("RolRol");
-				datos[1] = rs.getString("RolNom");
-				datos[2] = rs.getString("RolUsu");
+				datos[0] = rs.getInt("TipSerCod");
+				datos[1] = rs.getString("TipSerDes");
+				datos[2] = rs.getString("TipSerEstReg");
 				modelo.addRow(datos);
 			}
 			Tabla.setModel(modelo);
@@ -494,5 +498,10 @@ public class Interfaz extends JFrame {
 			modelo.removeRow(i);
 			i--;
 		}
+	}
+
+	public void close() {
+		WindowEvent closeWindow = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
+		Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(closeWindow);
 	}
 }
